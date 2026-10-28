@@ -869,10 +869,233 @@
         clip-path: none !important;
       }
     }
+
+    /* =========================================================
+   PRE-LOADER
+   ========================================================= */
+    .preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--white, #fff);
+      clip-path: inset(0 0 0 0);
+      transition: clip-path 1s var(--ease-inout), visibility 0s linear 1s;
+    }
+
+    .preloader.is-done {
+      clip-path: inset(0 0 100% 0);
+      visibility: hidden;
+    }
+
+    html.is-preloading,
+    html.is-preloading body {
+      overflow: hidden;
+    }
+
+    .preloader__inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: min(280px, 100% - 32px);
+      transition: opacity .5s ease, transform .8s var(--ease-inout);
+    }
+
+    .preloader.is-done .preloader__inner {
+      opacity: 0;
+      transform: translateY(-24px);
+    }
+
+    .pl-tooth {
+      width: 72px;
+      height: auto;
+      overflow: visible;
+    }
+
+    .pl-tooth-path {
+      fill: var(--ink, #0A0A0A);
+      fill-opacity: 0;
+      stroke: var(--ink, #0A0A0A);
+      stroke-width: 14;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation:
+        pl-draw 1.8s cubic-bezier(.65, 0, .35, 1) forwards,
+        pl-fill .7s ease 1.5s forwards;
+    }
+
+    .pl-tooth-path:nth-child(2) {
+      animation-delay: .25s, 1.7s;
+    }
+
+    @keyframes pl-draw {
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes pl-fill {
+      to { fill-opacity: 1; stroke-width: 0; }
+    }
+
+    .pl-name {
+      margin-top: 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1;
+    }
+
+    .pl-name__main {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      letter-spacing: .02em;
+      color: var(--ink, #0A0A0A);
+      white-space: nowrap;
+    }
+
+    .pl-name__main span {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(60%);
+      filter: blur(4px);
+      animation: pl-letter .8s var(--ease-expo) forwards;
+      animation-delay: calc(1.5s + var(--i) * 45ms);
+    }
+
+    .pl-name__sub {
+      margin-top: 10px;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: .32em;
+      color: #737373;
+      opacity: 0;
+      animation: pl-fade .8s ease 2.1s forwards;
+    }
+
+    @keyframes pl-letter {
+      to { opacity: 1; transform: none; filter: blur(0); }
+    }
+
+    @keyframes pl-fade {
+      to { opacity: 1; }
+    }
+
+    .pl-progress {
+      width: 100%;
+      margin-top: 34px;
+    }
+
+    .pl-bar {
+      position: relative;
+      height: 1px;
+      background: #E5E5E5;
+      overflow: hidden;
+    }
+
+    .pl-bar__fill {
+      position: absolute;
+      inset: 0;
+      background: var(--ink, #0A0A0A);
+      transform-origin: left;
+      transform: scaleX(0);
+    }
+
+    .pl-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .12em;
+      color: #737373;
+      text-transform: uppercase;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pl-tooth-path { stroke-dashoffset: 0; fill-opacity: 1; stroke-width: 0; }
+      .pl-name__main span,
+      .pl-name__sub { opacity: 1; transform: none; filter: none; }
+    }
   </style>
 </head>
 
 <body class="bg-white text-neutral-900 antialiased selection:bg-neutral-900 selection:text-white">
+
+  <!-- Pre-loader -->
+  <div class="preloader" id="preloader" role="status" aria-live="polite" aria-label="Carregando Vitta Goulart Odontologia">
+    <div class="preloader__inner">
+      <svg class="pl-tooth" viewBox="465 318 1268 1560" aria-hidden="true">
+        <path class="pl-tooth-path" pathLength="1" d="M1149.49 1227.86C1126.23 1224.15 1101.29 1227.81 1079.35 1237.05C1023.89 1260.22 983.68 1312.05 966.74 1368.98C930.77 1483.66 965.58 1605.55 956.00 1721.75C955.25 1729.91 954.20 1738.03 952.88 1746.10C885.16 1663.37 835.28 1567.32 803.46 1464.94C768.21 1352.29 755.86 1232.12 761.86 1113.89L762.04 1109.79C762.19 1106.50 761.30 1103.14 759.28 1100.22C758.77 1098.41 758.26 1096.60 757.73 1094.80C749.89 1068.37 740.97 1041.91 732.28 1015.86C711.29 953.69 683.66 873.80 662.77 811.41C648.08 767.57 632.80 721.57 625.70 677.33C620.75 646.45 619.40 614.48 626.96 584.00C645.23 511.43 722.63 460.07 796.42 460.54C823.36 460.76 848.47 467.12 873.16 478.81C910.31 496.55 944.43 523.46 979.60 545.63C1062.84 600.28 1151.87 619.55 1248.72 594.82C1249.08 594.73 1249.38 594.43 1249.45 594.04C1249.55 593.50 1249.19 592.98 1248.66 592.88C1244.96 592.20 1241.29 591.61 1237.63 590.98C1230.58 589.77 1223.10 588.17 1215.94 586.75C1116.11 565.69 1066.92 524.64 998.64 452.57C976.08 429.63 953.93 408.11 926.82 389.19C896.38 367.82 861.34 352.26 824.85 344.57C733.86 325.50 636.92 355.34 568.60 417.98C534.56 449.07 507.79 488.64 492.88 532.37C475.37 583.12 473.80 638.42 483.07 690.94C493.64 750.93 517.17 807.32 544.38 861.09C575.01 921.71 610.35 980.05 650.97 1034.50C672.21 1062.89 694.78 1090.50 719.56 1115.92C703.88 1174.60 696.41 1235.46 695.54 1296.31C693.22 1464.31 744.79 1634.15 842.97 1771.30C856.02 1789.62 870.07 1807.41 884.65 1824.59C891.67 1832.95 898.05 1839.97 907.01 1847.35C913.24 1852.50 922.52 1858.77 931.41 1862.46C943.57 1867.77 957.10 1870.04 970.36 1868.85C1005.17 1865.52 1029.86 1840.03 1040.28 1808.71C1042.83 1801.41 1044.36 1794.69 1045.71 1787.66L1046.22 1784.32L1047.24 1777.64C1047.54 1775.42 1047.94 1773.19 1048.15 1770.97L1048.84 1764.32C1048.84 1764.32 1049.50 1757.67 1049.50 1757.67C1050.26 1746.83 1050.67 1735.71 1050.53 1724.86C1049.93 1679.76 1041.18 1634.64 1030.86 1591.30C1015.56 1526.43 996.77 1461.16 1002.73 1394.13C1004.15 1380.14 1006.77 1365.66 1010.56 1352.16C1020.75 1317.74 1040.66 1286.14 1068.10 1262.77C1090.91 1243.48 1119.04 1230.96 1149.37 1229.79C1149.83 1229.78 1150.23 1229.44 1150.30 1228.97C1150.38 1228.44 1150.02 1227.94 1149.49 1227.86Z"/>
+        <path class="pl-tooth-path" pathLength="1" d="M1720.06 567.80C1709.55 472.06 1658.32 391.05 1567.74 353.32C1534.00 339.26 1498.16 332.47 1462.12 331.15C1432.41 329.51 1401.39 334.35 1374.37 346.59C1305.94 376.67 1266.60 444.02 1210.85 489.54C1189.84 507.05 1166.46 520.94 1140.80 531.40C1140.44 531.54 1140.18 531.90 1140.19 532.32C1140.19 532.86 1140.63 533.30 1141.18 533.30C1191.84 533.50 1241.40 509.82 1282.87 481.52C1321.47 456.28 1356.57 424.92 1399.17 412.89C1414.56 408.71 1430.54 407.63 1446.40 409.72C1452.29 410.48 1458.51 411.31 1464.33 412.42C1548.15 427.71 1601.56 471.49 1622.56 554.40C1622.56 554.40 1623.67 558.65 1623.67 558.65C1623.67 558.65 1624.22 560.77 1624.22 560.77L1624.67 562.95C1624.67 562.95 1626.54 571.67 1626.54 571.67C1626.89 573.11 1627.08 574.62 1627.35 576.10L1628.12 580.55L1628.91 585.01C1629.19 586.49 1629.32 588.03 1629.54 589.54C1632.79 612.25 1634.28 635.76 1633.70 658.69C1631.26 744.42 1595.74 823.88 1566.80 903.45C1550.81 947.42 1536.89 992.73 1530.63 1039.27C1529.09 1051.55 1527.69 1064.98 1527.25 1077.38C1524.45 1146.00 1533.33 1215.16 1534.11 1283.29C1534.24 1296.32 1534.18 1310.81 1533.43 1323.74C1533.35 1325.23 1532.63 1334.92 1532.58 1336.11C1532.21 1339.70 1531.75 1344.85 1531.36 1348.47C1524.51 1409.44 1508.59 1469.15 1489.59 1527.35C1478.27 1561.69 1465.61 1596.06 1450.75 1629.02C1427.71 1679.27 1399.31 1727.60 1362.34 1768.90C1361.30 1770.08 1360.07 1771.59 1359.00 1772.83C1357.70 1774.39 1356.16 1776.10 1354.58 1777.69C1354.47 1777.41 1354.36 1777.13 1354.25 1776.83L1353.71 1775.25L1353.21 1773.57C1353.03 1773.03 1352.89 1772.42 1352.73 1771.84L1352.49 1770.95L1352.25 1769.86L1350.32 1760.94C1341.62 1716.28 1344.94 1669.60 1348.98 1624.48C1352.22 1589.84 1355.25 1554.29 1357.19 1519.55C1358.29 1499.10 1359.01 1477.74 1357.84 1456.98L1357.64 1454.16L1357.22 1448.52L1356.60 1442.81C1356.60 1442.81 1356.28 1439.96 1356.28 1439.96C1355.61 1435.05 1354.53 1428.80 1353.49 1423.98C1352.69 1420.90 1351.79 1416.92 1350.79 1413.91C1343.72 1390.68 1333.77 1368.15 1319.97 1348.10C1283.30 1294.76 1227.16 1273.23 1164.84 1293.21C1164.40 1293.34 1164.10 1293.77 1164.15 1294.25C1164.21 1294.78 1164.69 1295.17 1165.22 1295.11C1179.07 1293.65 1192.92 1293.51 1206.27 1295.51C1212.83 1296.46 1219.44 1298.02 1225.75 1300.01C1279.64 1317.21 1305.62 1370.34 1314.72 1422.70C1315.15 1424.68 1315.45 1427.42 1315.72 1429.42L1315.87 1430.50C1315.87 1430.50 1315.96 1431.62 1315.96 1431.62C1316.16 1434.21 1316.49 1438.18 1316.47 1440.71C1316.71 1448.48 1316.31 1456.85 1315.76 1464.61C1312.58 1501.70 1305.41 1538.92 1299.25 1575.82C1293.12 1610.55 1286.21 1645.62 1282.66 1680.97C1279.00 1716.83 1278.86 1754.06 1285.99 1789.90C1287.63 1797.13 1289.52 1803.84 1292.61 1810.99C1304.34 1839.41 1331.04 1858.50 1362.81 1853.52C1384.64 1850.06 1402.61 1835.52 1416.70 1819.85C1432.56 1803.69 1447.52 1786.17 1461.08 1768.02C1487.51 1732.38 1510.05 1693.77 1528.76 1653.62C1542.85 1623.90 1554.84 1592.90 1564.26 1561.39C1588.13 1480.64 1596.06 1394.89 1585.74 1311.25C1574.21 1222.60 1549.59 1133.99 1564.93 1044.58C1570.25 1014.98 1579.71 986.18 1591.77 958.61C1607.60 921.92 1629.68 883.83 1649.15 848.64C1673.11 805.34 1695.81 760.39 1708.97 712.25C1722.02 665.54 1725.50 615.99 1720.06 567.80Z"/>
+      </svg>
+      <div class="pl-name" aria-hidden="true">
+        <span class="pl-name__main" data-pl-letters>Vitta Goulart</span>
+        <span class="pl-name__sub">ODONTOLOGIA</span>
+      </div>
+      <div class="pl-progress">
+        <div class="pl-bar"><span class="pl-bar__fill" data-pl-fill></span></div>
+        <div class="pl-meta"><span>Carregando</span><span data-pl-count>0%</span></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      'use strict';
+      var root = document.documentElement;
+      var pl = document.getElementById('preloader');
+      root.classList.add('is-preloading');
+
+      // Quebra o nome em letras para a entrada escalonada
+      var name = pl.querySelector('[data-pl-letters]');
+      name.innerHTML = name.textContent.split('').map(function (ch, i) {
+        return '<span style="--i:' + i + '">' + (ch === ' ' ? '&nbsp;' : ch) + '</span>';
+      }).join('');
+
+      var fill = pl.querySelector('[data-pl-fill]');
+      var count = pl.querySelector('[data-pl-count]');
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var MIN_TIME = reduce ? 300 : 2600;   // tempo para o dente terminar de se formar
+      var MAX_TIME = 8000;                  // nunca segura o usuário além disso
+      var start = performance.now();
+      var loaded = false, shown = 0, finished = false;
+
+      window.addEventListener('load', function () { loaded = true; });
+
+      function realProgress() {
+        if (loaded) return 1;
+        var imgs = document.images, total = imgs.length, done = 0;
+        for (var i = 0; i < total; i++) if (imgs[i].complete) done++;
+        return total ? Math.min(done / total, .95) : .5;
+      }
+
+      function tick(now) {
+        var t = now - start;
+        var target = Math.min(Math.min(t / MIN_TIME, 1), t > MAX_TIME ? 1 : realProgress());
+        shown += (target - shown) * .12;
+        if (target === 1 && shown > .995) shown = 1;
+        fill.style.transform = 'scaleX(' + shown + ')';
+        count.textContent = Math.round(shown * 100) + '%';
+        if (shown === 1) return finish();
+        requestAnimationFrame(tick);
+      }
+
+      function finish() {
+        if (finished) return;
+        finished = true;
+        setTimeout(function () {
+          pl.classList.add('is-done');
+          root.classList.remove('is-preloading');
+          window.dispatchEvent(new Event('preloader:done'));
+          setTimeout(function () { pl.remove(); }, 1100);
+        }, 250);
+      }
+
+      requestAnimationFrame(tick);
+    })();
+  </script>
 
   <!-- Faixa de localização -->
   <div class="bg-neutral-950 text-white text-[11px] font-medium tracking-wide py-2.5 px-4">
@@ -2142,8 +2365,14 @@
 
       /* ---------- Entrada ---------- */
       function playIntro() { document.documentElement.classList.add('is-loaded'); }
-      if (document.fonts && document.fonts.ready) document.fonts.ready.then(playIntro, playIntro); else playIntro();
-      setTimeout(playIntro, 1200);
+      // A entrada do site começa quando o pre-loader sai de cena
+      if (document.getElementById('preloader')) {
+        window.addEventListener('preloader:done', playIntro);
+        setTimeout(playIntro, 9500);
+      } else {
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(playIntro, playIntro); else playIntro();
+        setTimeout(playIntro, 1200);
+      }
     })();
   </script>
 </body>
